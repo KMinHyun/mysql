@@ -49,6 +49,7 @@ WHERE
 -- 퇴사한 사람을 검색하고 싶으면 `IS NULL` 대신 `IS NOT NULL`
 
 -- WHERE절에서 AND, OR 복합 사용시 주의점
+-- 원하는 조건에 맞게 잘 묶어야 함
 -- 입사일이 2025-01-01이후거나 2000-01-01이전이고, 이미 퇴사한 직원
 SELECT *
 FROM employees
