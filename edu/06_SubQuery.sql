@@ -72,3 +72,68 @@ WHERE
 			department_managers.emp_id = employees.emp_id
 	)
 ;
+
+-- JOIN문보다 SubQuery가 더 유용한 경우
+SELECT
+	emp.*
+FROM employees emp
+WHERE
+	EXISTS (SELECT 1 FROM salaries)
+;
+-- ------------------------
+-- SELECT절에서 사용하는 법
+-- ------------------------
+-- 사원별 역대 전체 급여 평균
+SELECT
+	emp.emp_id
+	,(
+		SELECT AVG(sal.salary)
+		FROM salaries sal
+		WHERE emp.emp_id = sal.emp_id
+	) avg_sal
+FROM employees emp
+;
+
+-- ---------------
+-- FROM절에서 사용
+-- ---------------
+SELECT
+	tmp.*
+FROM (
+	SELECT 
+		emp.emp_id
+		,emp.`name`
+	FROM employees emp
+) tmp
+-- 테이블을 임시로 생성하는 행위
+;
+
+-- -----------------
+-- INSERT문에서 사용
+-- -----------------
+INSERT INTO title_emps(
+	emp_id
+	,title_code
+	,start_at
+)
+VALUES (
+	(SELECT MAX(emp_id) FROM employees)
+	,(SELECT title_code FROM titles WHERE title = '사원')
+	,DATE(NOW())
+);
+
+-- -----------------
+-- UPDATE에서의 사용
+-- -----------------
+UPDATE title_emps tite1
+SET
+	tite1.end_at = (
+		SELECT emp.fire_at
+		FROM employees emp
+		WHERE emp.emp_id = 100000
+	) 
+WHERE
+	title_emp_id = 60614
+	AND tite1.end_at IS NULL
+-- IS NULL이 없으면 emp_id가 100000인 사원의 end_at가 전부 갱신됨
+;
